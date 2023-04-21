@@ -1,3 +1,4 @@
+import { Usuario } from '../classes/usuario';
 import { WebsocketService } from './websocket.service';
 import { Injectable } from '@angular/core';
 
@@ -5,18 +6,25 @@ import { Injectable } from '@angular/core';
   providedIn: 'root'
 })
 export class ChatService {
-
-  constructor(private websocketService: WebsocketService) { }
+  user: Usuario;
+  constructor(private websocketService: WebsocketService) {
+    this.user = this.websocketService.getUsuario()
+  }
 
   sendMessage(mensaje: string) {
     const payload = {
-      de: 'Daniel',
+      de: this.user.nombre,
       cuerpo: mensaje
     };
     this.websocketService.emit('mensaje', payload);
   }
+
   getMessages() {
     return this.websocketService.listen('mensaje-nuevo')
+  }
+
+  getPrivateMessages() {
+    return this.websocketService.listen('mensaje-privado'  );
   }
 
 }
